@@ -1,36 +1,54 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}Blockbuster{% endblock %}</title>
-  {% load static %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'estilos.css' %}">
 
-  {% load static %}
+ 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  
+  <link rel="stylesheet" href="{% static 'estilos.css' %}">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
   <div class="container">
-    <a class="navbar-brand" href="{% url 'main' %}">Blockbuster</a>
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'main' %}">
+      BLOCKBUSTER
+    </a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div id="nav" class="collapse navbar-collapse">
+      <!-- enlaces izquierda -->
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'main' %}">Inicio</a>
+          <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'main' %}">Inicio</a>
         </li>
-        {% for g in generos_nav %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'genero' g %}">{{ g }}</a>
-          </li>
-        {% empty %}
-
-        {% endfor %}
       </ul>
+
+      <!-- Filtro por género en la NAVBAR -->
+      <form method="get" action="{% url 'main' %}"
+            class="d-flex align-items-center my-2 my-lg-0 me-lg-3" role="search">
+        <label class="me-2 text-light small d-none d-md-inline">Filtrar por género:</label>
+        <select name="genero" class="form-select form-select-sm"
+                onchange="this.form.submit()" style="min-width: 180px">
+          <option value="">Todos</option>
+          {% for g in generos_nav %}
+            <option value="{{ g }}" {% if request.GET.genero == g %}selected{% endif %}>{{ g }}</option>
+          {% endfor %}
+        </select>
+        {% if request.GET.genero %}
+          <a href="{% url 'main' %}" class="btn btn-outline-secondary btn-sm ms-2">Limpiar</a>
+        {% endif %}
+      </form>
+
+      <!-- enlace derecha -->
       <ul class="navbar-nav">
         <li class="nav-item"><a class="nav-link" href="/admin/">Administrador</a></li>
       </ul>
